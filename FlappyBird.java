@@ -22,6 +22,7 @@ public class FlappyBird {
     private static final int SPACE_FOR_BIRD = 4;
 
     private static int pipeCounter = 0;
+    private static int score = 0;
 
 
     // method to display the flappy bird game window in the console
@@ -121,9 +122,25 @@ public class FlappyBird {
 
     // method to display the score and the game over message
     public static void displayScoreAndGameOverMessage(char[][] array) {
+        System.out.println("Score: " + score);
+        System.out.println("Game Over");
     }
 
     public static void main(String[] args) {
-        System.out.println("Hello, World!");
+        // create the array
+        char[][] array = new char[ARRAY_HEIGHT][ARRAY_WIDTH];
+        // print the game window
+        displayGameWindow(array);
+
+        // Play the game
+        while (true) {
+            // shift the array to the left
+            shiftLeft(array);
+
+            // detect collisions with the pipes or the boundaries
+            detectCollisions(array);
+            // count the score
+            countScore(array);
+        }
     }
 }
