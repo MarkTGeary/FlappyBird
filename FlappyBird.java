@@ -26,7 +26,17 @@ public class FlappyBird {
 
     // method to shift the nested char arrays to the left by 1 position
     public static void shiftLeft(char[][] array) {
-
+        // take the current array and shift it to the left by 1 position
+        // the right most column will be empty when we return
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length - 1; j++) {
+                // Make the current column equal to the column on the left,
+                // this will shift the column to the left by 1 position
+                array[i][j] = array[i][j + 1];
+            }
+            // Make the right most column empty
+            array[i][array[i].length - 1] = ' ';
+        }
     }
 
     // method to add pipes to the right of the array
