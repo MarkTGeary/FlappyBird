@@ -58,6 +58,7 @@ public class FlappyBird {
     // method to determine if we should add pipes to the right of the array
     public static boolean shouldAddPipes() {
         if (pipeCounter - GAP_BETWEEN_PIPES >= 0) {
+            pipeCounter = 0;
             return true;
         } else {
             pipeCounter++;
