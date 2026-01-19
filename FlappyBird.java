@@ -10,6 +10,37 @@ A method to display the score and the game over message
 */
 
 public class FlappyBird {
+    // method to display the flappy bird game window in the console
+    public static void displayGameWindow() {
+        System.out.println("Flappy Bird Game");
+    }
+
+    // method to shift the nested char arrays to the left by 1 position
+    public static void shiftLeft(char[][] array) {
+
+    }
+
+    // method to add pipes to the right of the array
+    public static void addPipes(char[][] array) {
+
+    }
+
+    // method to detect collisions with the pipes or the boundaries
+    public static void detectCollisions(char[][] array) {
+    }
+
+    // method to count the score
+    public static void countScore(char[][] array) {
+    }
+
+    // method to handle the user input to move up or down
+    public static void handleUserInput(char[][] array) {
+    }
+
+    // method to display the score and the game over message
+    public static void displayScoreAndGameOverMessage(char[][] array) {
+    }
+
     public static void main(String[] args) {
         System.out.println("Hello, World!");
     }
