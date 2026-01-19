@@ -220,7 +220,7 @@ public class FlappyBird {
         Scanner scanner = new Scanner(System.in);
         // We need the input to stay on the same line so we don't get a new line character
         // enters should stay on the same line from the user
-        System.out.print("\r");
+        //System.out.print("\r");
         
         String input = scanner.next();
         if (input.equals("w")) {
