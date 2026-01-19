@@ -13,6 +13,16 @@ A method to display the score and the game over message
 import java.util.Scanner;
 
 public class FlappyBird {
+    // class variables
+    private static final int ARRAY_WIDTH = 25;
+    private static final int ARRAY_HEIGHT = 15;
+    private static final int PIPE_WIDTH = 1;
+    private static final int GAP_BETWEEN_PIPES = 5;
+    private static final int SPACE_FOR_BIRD = 3;
+
+    private static int pipeCounter = 0;
+
+
     // method to display the flappy bird game window in the console
     public static void displayGameWindow(char[][] array) {
         System.out.println("Flappy Bird Game");
@@ -36,6 +46,22 @@ public class FlappyBird {
             }
             // Make the right most column empty
             array[i][array[i].length - 1] = ' ';
+        }
+        // Now we need to add a new column to the right of the array
+        // this will either have pipes or nothing
+
+        if (shouldAddPipes()) {
+            addPipes(array);
+        }
+    }
+
+    // method to determine if we should add pipes to the right of the array
+    public static boolean shouldAddPipes() {
+        if (pipeCounter - GAP_BETWEEN_PIPES >= 0) {
+            return true;
+        } else {
+            pipeCounter++;
+            return false;
         }
     }
 
