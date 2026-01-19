@@ -36,6 +36,14 @@ public class FlappyBird {
         }
     }
 
+    // method to initialise the bird
+    public static void initialiseBird(char[][] array) {
+        // the bird is represented by a 'o'
+        // put it in the middle on the left of the array
+        array[array.length / 2][0] = 'o';
+
+    }
+
     // method to shift the nested char arrays to the left by 1 position
     public static void shiftLeft(char[][] array) {
         // take the current array and shift it to the left by 1 position
@@ -151,13 +159,20 @@ public class FlappyBird {
     public static void main(String[] args) {
         // create the array
         char[][] array = new char[ARRAY_HEIGHT][ARRAY_WIDTH];
+
+        // initialise the bird
+        initialiseBird(array);
+
         // print the game window
         displayGameWindow(array);
-
         // Play the game
         while (true) {
+            // handle the user input
+            handleUserInput(array);
+
             // shift the array to the left
             shiftLeft(array);
+            // add pipes is called based on the count from shiftLeft function
 
             // detect collisions with the pipes or the boundaries
             detectCollisions(array);
