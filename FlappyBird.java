@@ -114,10 +114,32 @@ public class FlappyBird {
 
     // method to move the bird up
     public static void moveUp(char[][] array) {
+        // move the bird up by 1 position
+        // the bird is represented by a 'o'
+        // we need to find the 'o' in the array and move it up by 1 position
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                if (array[i][j] == 'o') {
+                    array[i][j] = ' ';
+                    array[i - 1][j] = 'o';
+                }
+            }
+        }
     }
 
     // method to move the bird down
     public static void moveDown(char[][] array) {
+        // move the bird down by 1 position
+        // the bird is represented by a 'o'
+        // we need to find the 'o' in the array and move it down by 1 position
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                if (array[i][j] == 'o') {
+                    array[i][j] = ' ';
+                    array[i + 1][j] = 'o';
+                }
+            }
+        }
     }
 
     // method to display the score and the game over message
