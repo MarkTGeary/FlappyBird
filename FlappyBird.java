@@ -11,8 +11,14 @@ A method to display the score and the game over message
 
 public class FlappyBird {
     // method to display the flappy bird game window in the console
-    public static void displayGameWindow() {
+    public static void displayGameWindow(char[][] array) {
         System.out.println("Flappy Bird Game");
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                System.out.print(array[i][j]);
+            }
+            System.out.println();
+        }
     }
 
     // method to shift the nested char arrays to the left by 1 position
