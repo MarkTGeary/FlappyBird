@@ -71,14 +71,15 @@ The game clears the console between each frame:
 ### Game Board Representation
 ```
 Flappy Bird Game - Score: 0
-                         
-o                        
+
+                  ║ 
+o                 ║                 
                   ║      
                   ║      
-                         
+                   
+                      
                   ║      
-                  ║      
-                         
+                  ║ 
 ```
 The bird (`o`) stays in the leftmost column. Pipes (`║`) scroll from right to left with gaps for the bird to pass through.
 
