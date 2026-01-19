@@ -11,6 +11,7 @@ A method to display the score and the game over message
 
 // Imports
 import java.util.Scanner;
+import java.util.Random;
 
 public class FlappyBird {
     // class variables
@@ -18,7 +19,7 @@ public class FlappyBird {
     private static final int ARRAY_HEIGHT = 15;
     private static final int PIPE_WIDTH = 1;
     private static final int GAP_BETWEEN_PIPES = 5;
-    private static final int SPACE_FOR_BIRD = 3;
+    private static final int SPACE_FOR_BIRD = 4;
 
     private static int pipeCounter = 0;
 
@@ -68,7 +69,25 @@ public class FlappyBird {
 
     // method to add pipes to the right of the array
     public static void addPipes(char[][] array) {
+        // add a pipe to the right of the array
+        // It will be random but will have a space of 4
+        Random random = new Random();
+        
+        // The random number is between 1 and 10 inclusive.
+        // Whatever the number is, we put that many pipes on the top
+        // then we have 4 blank spaces
+        // and then the top pipe will be the rest of the spaces filled with a pipe
+        int randomNumber = random.nextInt(10) + 1;
 
+        for (int i = 0; i < randomNumber; i++) {
+            array[i][array[i].length - 1] = '║';
+        }
+        for (int i = randomNumber + 1; i < randomNumber + SPACE_FOR_BIRD; i++) {
+            array[i][array[i].length - 1] = ' ';
+        }
+        for (int i = randomNumber + SPACE_FOR_BIRD; i < array.length; i++) {
+            array[i][array[i].length - 1] = '║';
+        }
     }
 
     // method to detect collisions with the pipes or the boundaries
