@@ -1,16 +1,17 @@
 # Flappy Bird - Console Text Game
 
-A simple, minimalist implementation of Flappy Bird created in plain vanilla Java that runs entirely in the console/terminal.
+A simple, turn-based implementation of Flappy Bird created in plain vanilla Java that runs entirely in the console/terminal. Control the bird's vertical position as pipes scroll past from right to left.
 
 ## 🎮 Game Overview
 
-This is a text-based recreation of the classic Flappy Bird game that runs in your terminal. Navigate a bird (represented by a character) through gaps in pipes by timing your jumps correctly!
+This is a text-based, turn-based recreation of the classic Flappy Bird game that runs in your terminal. Navigate a bird (represented by the character `o`) through gaps in pipes by controlling its vertical position with W and S keys!
 
 ## 📋 Game Specifications
 
 - **Display Size**: 25 characters wide × 15 characters high
-- **Rendering**: Uses ANSI escape codes for in-place printing (single console output)
-- **Language**: Pure Java (no external dependencies)
+- **Rendering**: Console clearing between frames for screen updates
+- **Input Style**: Turn-based (waits for player input each step)
+- **Language**: Pure Java (no external dependencies, uses Scanner for input)
 - **Platform**: Cross-platform (Windows, macOS, Linux)
 
 ## 🎯 How to Play
@@ -19,23 +20,25 @@ This is a text-based recreation of the classic Flappy Bird game that runs in you
 Guide the bird through as many pipe gaps as possible without colliding with pipes or boundaries.
 
 ### Controls
-- **SPACE** or **ENTER**: Make the bird jump/flap
+- **W**: Move the bird up
+- **S**: Move the bird down
 - **Q**: Quit the game
 
 ### Game Mechanics
-- The bird continuously falls due to gravity
-- Each jump gives the bird upward momentum
+- The bird stays in the leftmost column and you control its vertical position
 - Pipes move from right to left across the screen
-- Score increases as you successfully pass through pipes
+- Each move requires manual input (turn-based style)
+- Score increases as you successfully pass through pipe gaps
 - Game ends on collision with pipes, top boundary, or bottom boundary
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Java JDK 8 or higher
-- Terminal/Console with ANSI escape code support
-  - **Windows**: Windows 10+ (Command Prompt or PowerShell with ANSI enabled)
-  - **macOS/Linux**: Native terminal support
+- Terminal/Console application (best results in native terminals)
+  - **Windows**: Command Prompt or PowerShell
+  - **macOS/Linux**: Terminal.app, iTerm, or any standard terminal
+- Note: Works best outside of IDE consoles
 
 ### Compilation
 ```bash
@@ -49,32 +52,42 @@ java FlappyBird
 
 ## 🛠️ Technical Details
 
-### In-Place Printing
-The game uses ANSI escape sequences to refresh the display without scrolling:
-- `\033[H` - Moves cursor to home position (top-left)
-- `\033[2J` - Clears the screen
-- This creates a smooth animation effect by overwriting the previous frame
+### Game Constants
+```java
+ARRAY_WIDTH = 25          // Game board width
+ARRAY_HEIGHT = 15         // Game board height
+PIPE_WIDTH = 1           // Width of pipe columns
+GAP_BETWEEN_PIPES = 5    // Spaces between pipe pairs
+SPACE_FOR_BIRD = 4       // Size of gap in pipes for bird to pass through
+```
+
+### Screen Clearing
+The game clears the console between each frame:
+- **Windows**: Uses `cmd /c cls` command via ProcessBuilder
+- **macOS/Linux**: Uses ANSI escape sequences (`\033[H\033[2J`)
+- **Fallback**: Prints 50 newlines if other methods fail
+- This refreshes the display for each game state update
 
 ### Game Board Representation
 ```
-┌─────────────────────────┐
-│                         │
-│         @               │  <- Bird
-│                  ║      │
-│                  ║      │
-│                         │  <- Gap in pipe
-│                  ║      │
-│                  ║      │
-│                         │
-└─────────────────────────┘
+Flappy Bird Game - Score: 0
+                         
+o                        
+                  ║      
+                  ║      
+                         
+                  ║      
+                  ║      
+                         
 ```
+The bird (`o`) stays in the leftmost column. Pipes (`║`) scroll from right to left with gaps for the bird to pass through.
 
 ### Key Features
-- **Real-time Input**: Non-blocking keyboard input for responsive controls
-- **Frame-Based Animation**: Consistent game loop with timing control
+- **Turn-Based Input**: Scanner-based keyboard input (blocking, waits for player action)
+- **Step-Based Animation**: Game updates after each player input
 - **Collision Detection**: Accurate hit detection for pipes and boundaries
 - **Score Tracking**: Live score display and game-over statistics
-- **Simple Physics**: Gravity simulation and jump mechanics
+- **Simple Movement**: Direct vertical control without gravity simulation
 
 ## 📂 Project Structure
 
@@ -88,44 +101,43 @@ FlappyBird/
 
 | Symbol | Description |
 |--------|-------------|
-| `@` or `●` | The bird |
+| `o` | The bird |
 | `║` | Pipe walls |
-| `═` | Ground/ceiling borders |
-| `│` | Side borders |
-| `└┘┌┐` | Corner borders |
+| (space) | Empty space / gaps |
 
 ## 🐛 Known Limitations
 
-- Terminal must support ANSI escape codes
-- Some terminals may have input lag
-- Windows users may need to enable Virtual Terminal Processing
-- Game speed depends on system performance
+- Game is turn-based (not real-time) - waits for input after each move
+- No gravity simulation - bird position is manually controlled
+- Console clearing may not work in all terminal environments
+- Best played in a native terminal (Command Prompt, PowerShell, Terminal.app)
+- May not work properly in IDE embedded consoles
+- Requires pressing Enter after each W/S input
 
 ## 🔧 Troubleshooting
 
-### Windows ANSI Issues
-If colors/clearing doesn't work on Windows, ensure ANSI support is enabled:
-```java
-// Add this at the start of your program
-System.out.println("\033[0m");
-```
-
-Or run in Windows Terminal instead of legacy Command Prompt.
+### Console Not Clearing Properly
+If the console doesn't clear properly:
+- **Windows**: Make sure you're running in Command Prompt or PowerShell (not IDE console)
+- **macOS/Linux**: Most terminals support ANSI codes by default
+- The game includes a fallback that prints newlines if clearing fails
 
 ### Input Not Responding
 - Make sure your terminal window has focus
-- Try running with administrator privileges
-- Check that your Java version supports console input
+- The game waits for you to type W, S, or Q and press Enter
+- Check that your Java version supports Scanner input from System.in
 
 ## 📝 Future Enhancements
 
 Potential features for future versions:
+- [ ] Add gravity simulation and automatic falling
+- [ ] Implement non-blocking real-time input
 - [ ] High score persistence (save to file)
-- [ ] Difficulty levels (speed adjustment)
-- [ ] Color themes
+- [ ] Difficulty levels (pipe gap size, spacing adjustment)
+- [ ] Color themes using ANSI color codes
 - [ ] Sound effects (console beep)
 - [ ] Multiple bird characters
-- [ ] Power-ups and obstacles
+- [ ] Borders and enhanced visual elements
 
 ## 📜 License
 
@@ -145,10 +157,11 @@ This is a educational project. Feel free to use, modify, and distribute as neede
 
 Perfect for learning:
 - Console I/O in Java
-- Game loop concepts
+- 2D array manipulation
 - Basic collision detection
-- ANSI escape codes
-- Real-time user input handling
+- Console clearing techniques (cross-platform)
+- Turn-based game logic
+- Random number generation for procedural content
 
 ---
 
