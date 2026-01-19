@@ -9,6 +9,9 @@ A method to display the score and the game over message
 
 */
 
+// Imports
+import java.util.Scanner;
+
 public class FlappyBird {
     // method to display the flappy bird game window in the console
     public static void displayGameWindow(char[][] array) {
@@ -41,6 +44,23 @@ public class FlappyBird {
 
     // method to handle the user input to move up or down
     public static void handleUserInput(char[][] array) {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        if (input.equals("w")) {
+            moveUp(array);
+        } else if (input.equals("s")) {
+            moveDown(array);
+        } else if (input.equals("q")) {
+            System.exit(0);
+        }
+    }
+
+    // method to move the bird up
+    public static void moveUp(char[][] array) {
+    }
+
+    // method to move the bird down
+    public static void moveDown(char[][] array) {
     }
 
     // method to display the score and the game over message
