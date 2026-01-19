@@ -23,16 +23,43 @@ public class FlappyBird {
 
     private static int pipeCounter = 0;
     private static int score = 0;
+    private static boolean justScoredForPipe = false;  // Track if we just scored
 
+
+    // method to clear the console
+    public static void clearConsole() {
+        try {
+            if (System.getProperty("os.name").contains("Windows")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+            }
+        } catch (Exception e) {
+            // If clearing fails, just print some newlines
+            for (int i = 0; i < 50; i++) {
+                System.out.println();
+            }
+        }
+    }
 
     // method to display the flappy bird game window in the console
     public static void displayGameWindow(char[][] array) {
-        System.out.println("Flappy Bird Game");
+        System.out.println("Flappy Bird Game - Score: " + score);
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[i].length; j++) {
                 System.out.print(array[i][j]);
             }
             System.out.println();
+        }
+    }
+
+    // method to initialise the array with spaces
+    public static void initialiseArray(char[][] array) {
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                array[i][j] = ' ';
+            }
         }
     }
 
@@ -46,6 +73,15 @@ public class FlappyBird {
 
     // method to shift the nested char arrays to the left by 1 position
     public static void shiftLeft(char[][] array) {
+        // First, find and save the bird's row position
+        int birdRow = -1;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i][0] == 'o') {
+                birdRow = i;
+                break;
+            }
+        }
+        
         // take the current array and shift it to the left by 1 position
         // the right most column will be empty when we return
         for (int i = 0; i < array.length; i++) {
@@ -57,6 +93,12 @@ public class FlappyBird {
             // Make the right most column empty
             array[i][array[i].length - 1] = ' ';
         }
+        
+        // Restore the bird to column 0 at its saved row position
+        if (birdRow != -1) {
+            array[birdRow][0] = 'o';
+        }
+        
         // Now we need to add a new column to the right of the array
         // this will either have pipes or nothing
 
@@ -67,13 +109,12 @@ public class FlappyBird {
 
     // method to determine if we should add pipes to the right of the array
     public static boolean shouldAddPipes() {
-        if (pipeCounter - GAP_BETWEEN_PIPES >= 0) {
+        pipeCounter++;
+        if (pipeCounter > GAP_BETWEEN_PIPES) {
             pipeCounter = 0;
             return true;
-        } else {
-            pipeCounter++;
-            return false;
         }
+        return false;
     }
 
     // method to add pipes to the right of the array
@@ -82,35 +123,106 @@ public class FlappyBird {
         // It will be random but will have a space of 4
         Random random = new Random();
         
-        // The random number is between 1 and 10 inclusive.
-        // Whatever the number is, we put that many pipes on the top
-        // then we have 4 blank spaces
-        // and then the top pipe will be the rest of the spaces filled with a pipe
-        int randomNumber = random.nextInt(10) + 1;
+        // The random number determines where the gap starts
+        // Make sure the gap doesn't go beyond the array bounds
+        int maxStart = array.length - SPACE_FOR_BIRD;
+        int randomNumber = random.nextInt(maxStart);
 
+        // Top pipes (from 0 to randomNumber-1)
         for (int i = 0; i < randomNumber; i++) {
             array[i][array[i].length - 1] = '║';
         }
-        for (int i = randomNumber + 1; i < randomNumber + SPACE_FOR_BIRD; i++) {
+        // Gap for the bird (from randomNumber to randomNumber + SPACE_FOR_BIRD - 1)
+        for (int i = randomNumber; i < randomNumber + SPACE_FOR_BIRD; i++) {
             array[i][array[i].length - 1] = ' ';
         }
+        // Bottom pipes (from randomNumber + SPACE_FOR_BIRD to end)
         for (int i = randomNumber + SPACE_FOR_BIRD; i < array.length; i++) {
             array[i][array[i].length - 1] = '║';
         }
     }
 
     // method to detect collisions with the pipes or the boundaries
-    public static void detectCollisions(char[][] array) {
+    public static boolean detectCollisions(char[][] array) {
+        // Find the bird's position
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[i].length; j++) {
+                if (array[i][j] == 'o') {
+                    // Check if bird hit top or bottom boundary
+                    if (i == 0 || i == array.length - 1) {
+                        return true;  // Collision detected
+                    }
+                    // Check if bird hit a pipe (check the next column to the right)
+                    if (j + 1 < array[i].length && array[i][j + 1] == '║') {
+                        return true;  // Collision detected
+                    }
+                    return false;  // No collision
+                }
+            }
+        }
+        return false;
     }
 
     // method to count the score
     public static void countScore(char[][] array) {
+        // Find the bird's position
+        int birdRow = -1;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i][0] == 'o') {
+                birdRow = i;
+                break;
+            }
+        }
+        
+        if (birdRow == -1) return;
+        
+        // Check if there's a pipe in column 1 (bird is currently passing through)
+        boolean pipeInColumn1 = false;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i][1] == '║') {
+                pipeInColumn1 = true;
+                break;
+            }
+        }
+        
+        // If there's a pipe in column 1 and bird is in the gap
+        if (pipeInColumn1 && array[birdRow][1] == ' ') {
+            // Check if bird is in a gap (has pipes above and below in column 1)
+            boolean pipeAbove = false;
+            boolean pipeBelow = false;
+            
+            for (int i = 0; i < birdRow; i++) {
+                if (array[i][1] == '║') {
+                    pipeAbove = true;
+                    break;
+                }
+            }
+            for (int i = birdRow + 1; i < array.length; i++) {
+                if (array[i][1] == '║') {
+                    pipeBelow = true;
+                    break;
+                }
+            }
+            
+            // If bird is in a gap and we haven't scored for this pipe yet
+            if (pipeAbove && pipeBelow && !justScoredForPipe) {
+                score++;
+                justScoredForPipe = true;  // Mark that we scored for this pipe
+            }
+        } else if (!pipeInColumn1) {
+            // No pipe in column 1, reset the flag for next pipe
+            justScoredForPipe = false;
+        }
     }
 
     // method to handle the user input to move up or down
     public static void handleUserInput(char[][] array) {
         Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+        // We need the input to stay on the same line so we don't get a new line character
+        // enters should stay on the same line from the user
+        System.out.print("\r");
+        
+        String input = scanner.next();
         if (input.equals("w")) {
             moveUp(array);
         } else if (input.equals("s")) {
@@ -125,11 +237,17 @@ public class FlappyBird {
         // move the bird up by 1 position
         // the bird is represented by a 'o'
         // we need to find the 'o' in the array and move it up by 1 position
+        // the bird will stay on the left most column
         for (int i = 0; i < array.length; i++) {
             for (int j = 0; j < array[i].length; j++) {
                 if (array[i][j] == 'o') {
                     array[i][j] = ' ';
-                    array[i - 1][j] = 'o';
+                    if (i > 0) {  // Check boundary
+                        array[i - 1][j] = 'o';
+                    } else {
+                        array[i][j] = 'o';  // Keep bird in place if at top
+                    }
+                    return;  // Exit after moving the bird once
                 }
             }
         }
@@ -144,7 +262,12 @@ public class FlappyBird {
             for (int j = 0; j < array[i].length; j++) {
                 if (array[i][j] == 'o') {
                     array[i][j] = ' ';
-                    array[i + 1][j] = 'o';
+                    if (i < array.length - 1) {  // Check boundary
+                        array[i + 1][j] = 'o';
+                    } else {
+                        array[i][j] = 'o';  // Keep bird in place if at bottom
+                    }
+                    return;  // Exit after moving the bird once
                 }
             }
         }
@@ -160,23 +283,37 @@ public class FlappyBird {
         // create the array
         char[][] array = new char[ARRAY_HEIGHT][ARRAY_WIDTH];
 
+        // initialise the array with spaces
+        initialiseArray(array);
+        
         // initialise the bird
         initialiseBird(array);
 
-        // print the game window
-        displayGameWindow(array);
         // Play the game
         while (true) {
-            // handle the user input
+            // Clear console first for smooth animation
+            clearConsole();
+            
+            // Display the game state
+            displayGameWindow(array);
+            System.out.println("Press 'w' to move up, 's' to move down, 'q' to quit");
+            System.out.print("Enter your input: ");
+
+            // Handle user input
             handleUserInput(array);
-
-            // shift the array to the left
+            
+            // Shift the array to the left (world moves)
             shiftLeft(array);
-            // add pipes is called based on the count from shiftLeft function
-
-            // detect collisions with the pipes or the boundaries
-            detectCollisions(array);
-            // count the score
+            
+            // Detect collisions
+            if (detectCollisions(array)) {
+                clearConsole();
+                displayGameWindow(array);
+                displayScoreAndGameOverMessage(array);
+                break;  // End the game
+            }
+            
+            // Count the score
             countScore(array);
         }
     }
